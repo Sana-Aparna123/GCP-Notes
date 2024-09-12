@@ -1,0 +1,22 @@
+Google Cloud Platform(GCP):
+---------------------------
+*As of June 2024, Google Cloud Platform (GCP) has over 40 regions and 121 zones worldwide.Each region has 3 availability zones.\
+
+Region-->Specific geographical location to host our resources.
+Adavantages:
+-----------
+*High Availability
+*Low Latency
+*Global Footprint
+*Adhere to government regulations
+
+Zones-->we can achieve high availability with same region using zones.Every region has 3 availability zones.
+*Each Zone has one or more discrete clusters(cluster means distinct physical infrastructure that is housed in data center).
+*zones in an region are connected with low-latency risks
+
+Advantage
+-----------:
+Increased availability and fault tolerance within the region.
+
+
+
