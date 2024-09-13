@@ -1,0 +1,155 @@
+#Date:12/09/24
+
+Google Compute Engine(Like EC2 in  aws):
+----------------------------------------
+In corporate data center,we deploy our applications in physical server.But in cloud we deploy applications in virtual servers.
+*renting Virtual server-->called virtual machines
+*In GCP we use Google Compute Engine(GCE) to provision(rent) and manage virtual machines.
+
+Compute Engine-Features
+-----------------------
+*Create and Manage the life cycle of virtual machines(Vms) instances.(Create,stop,restart or terminate vms)
+*We can use Load Balancers and Autoscaling to multiple VMs.
+*Attach Storage(& Network Storage) to your VM instances(running os in harddisk and attaches to vm)
+*Manage Network Connectivity and Configuration of your vm instances
+
+Our Goal:
+--------
+Setup VM instances as HTTP(Web) Server.
+Distribute Load with Load Balancers.
+
+
+Task:
+-------
+1.creating an instance
+2.connect to the SSH
+3.run below commands in ssh:
+sudo su-->go to root user
+apt update 
+apt install apache2
+ls /var/www/html -->debian default root directory
+echo "Hello World!"
+echo "Hello World!" > /var/www/html/index.html
+echo $(hostname) -->print hostname or insance name
+echo $(hostname -i) --->print host private ip(internal ip)
+echo "Hello World from $(hostname)"
+echo "Hello World from $(hostname) $(hostname -i)"
+echo "Hello world from $(hostname) $(hostname -i)" > /var/www/html/index.html
+sudo service apache2 start
+
+
+
+
+Internal(private) and External(public) ip for instance:
+--------------------------------------------------------
+*External ip addresses are Internet Addressable
+*Internal ip addresses are internal only for corporate network
+*you cannot have two resources with same external ip(public ip) addresses-->publish over internet
+*but two different corporate networks can have same internal ip(private) address.
+*By default when you create the instances,All vms assigned atleast one internal ip.
+*Creation of external ip address can be enabled for vm instances.(when you stop an instance external ip address is lost).
+
+Demo to see internal and external ip:when you start and stop the instance you can see the difference.
+
+
+Static ip address:(External ip addresss option in VPC)
+----------------------
+How to get static external ip address for vm?
+
+Demo:to enable static external ip to VM.
+
+(note:ephemerel--changes,static--not change)
+
+important points:
+-----------
+*Static ip is switched to another VM instance in same project.
+*Static ip remains attached even if you stop the instance.you have to manually detached it.
+note:you are billed for static ip when your not using well.
+*if you dont want static ip release the static ip.
+
+
+Simply VM HTTP server setup
+-----------------------------
+We can reduce the no of steps in creating an VM instance and setting up a HTTP server
+
+1.Startup Script
+2.Instance Template
+3.Custom Image
+
+1.Bootstraping with Startup Sacript
+
+#!/bin/bash
+apt update 
+apt -y install apache2
+echo "Hello world from $(hostname) $(hostname -I)" > /var/www/html/index.html
+
+Bootstraping:Install OS patches or software when VM is launched.
+In VM you can configure Startup Sscript to Bootstrap
+DEMO:Using Startup script-->while creating instance go to Advance Options-->Management-->Automation-->paste the script in text box.
+
+
+2.Instance Templates
+
+Why do you need to specify all the VM instance details(Image,instance type etc.) every time you launch an instance?
+   *How about creating a instance template?
+   *Define machine type,image,labels,startup script and other properties.
+   
+Used to create VM instances and managed instance groups
+  *Provides convinient way to create similar instances
+  
+  
+Cannot be updated
+  *To make change,Copy on existing template and modify it.
+  
+  
+ Image family can be specified(example-Debian-9)
+   *Latest non-deprecated version of family is used
+   
+Demo:Launch VM instance using Instance Template
+
+
+#Date:13/09/24
+
+Reducing Launch Time with Custom images
+----------------------------------------
+Installing OS patches and software at launch of Vm instances increases the bootup time.
+
+How about creating an custom image with Os patches and softwares pre-sinstalled?
+   *Can be created from an instance,a persistent disk,a snapshot,another image,or a file in Cloud Storage.
+   *you can share custom image through across project
+   *whenever you created an image if it not used over a period of time if you dont want you can mark as an deprecated old image and create
+   an new image specify recommended new image.
+   *Hardening an image--->create an image which follows the corporate security standards.Once you have an hardening image you can 
+   create secure VM instances.
+   
+prefer using custom image to startup script(Startup increase the bootup time).
+
+DEMO:Create an custom image and using it in an instance Template.
+Note:You never create an image from disks of running instance.(Stop the instance and create).
+
+step:
+#creating an custom image using disks and used that custom image by creating an VM instance directly or with the help of custom image we can create template instance and using that template instance we can create VM instance
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
