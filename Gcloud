@@ -1,0 +1,159 @@
+Gcloud:
+-------------
+*Command Line Interface to interract with Google Cloud Resources.
+*Most of the GCp services are also handled from CLI using Gcloud like Compute engine Vms,managed instance groups,databases etc.
+* we can also do the CRUD operations from existing resources and perform actions like deployment etc.
+*Some GCP services have specific tool:
+    #Cloud Storage-gsutil CLI
+    #Cloud Bigquery-bq
+    #Cloud Bigtable-cbt
+    #Kubernetes-Kubectl(In addition to Gcloud which is used to manage clusters) 
+    
+    
+ Installation:
+ ------------
+ *Gcloud is a part of Google Cloud SDK.
+     #Google cloud SDK requires Python
+     #Instructions to install Cloud SDK(and Gcloud)-->https://cloud.google.com/sdk/docs/install
+    
+*you can also use Gcloud Cloud Shell
+    In cloud shell:
+    *gcloud --version
+    *gcloud init (initialize or reinitialize gcloud)-->it will show the existing confuguration.
+        1.Authorize gcloud to use ur account credentials.
+        2.Setup Configuration.
+    *gcloud config list -list all properties of the active configuration.
+    
+    
+    
+  Commands:
+  -------------  
+Here are some of the commands we would execute in the next few steps:
+
+You can refer back to this if you have problems. Good Luck.
+
+gcloud config list compute/region
+gcloud config list compute/zone
+gcloud config list project or gcloud config list core/project
+
+
+
+gcloud config set:
+----------------
+Set the specific property in your active configuration.
+Syntax: 
+        gcloud config set SECTION/PROPERTY VALUE
+   
+ Commands:
+ ------------
+   gcloud config set core/project VALUE
+   gcloud config set compute/region VALUE
+   gcloud config set compute/zone VALUE
+   gcloud config set core/verbosity VALUE (debug)
+   
+Note:core,compute-->sections and project,region,zone -->properties
+     specigying core is optional you can give directly like gcloud config set project VALUE
+     
+     
+   gcloud config set --help   --->get more details
+   
+To remove default configurations like which we set so we can use "unset" in the place of "set".
+
+
+Managing Multiple Configurations using Gcloud:
+-----------------------------------------------
+Scenario:you are working on multiple projects  from the same machine.You would want to be able to execute command using different configurations. 	
+      How do you specify this?
+      *   gcloud config configurations create/delete/describe/activate/list
+commands:
+----------
+gcloud config configurations create Name(configuration name)   
+gcloud config configurations list   -->it will list all the configurations.
+gcloud config configurations activate my-configuration(Name)  -->to switch previous configuration
+gcloud config list
+gcloud config configurations describe my-second-configuration -->it will display the content of my-second-configuration.
+      
+      
+gcloud command structure playing with services
+----------------------------------------------
+
+gcloud GROUP SUBGROUP ACTION ...
+   
+group-service that are using(ex:compute servive)
+subgroup-components inside of service(instances,images,instance templates,machine types,region,zones etc.)
+action-action performed in that service(create,list,start,stop or describe etc.)
+
+
+example:
+gcloud compute instances list
+gcloud compute instances create
+gcloud compute instances create my-first-instance-from-gcloud
+gcloud compute instances describe my-first-instance-from-gcloud
+gcloud compute instances delete my-first-instance-from-gcloud
+gcloud compute zones list
+gcloud compute regions list
+gcloud compute machine-types list
+ 
+gcloud compute machine-types list --filter zone:asia-southeast2-b
+gcloud compute machine-types list --filter "zone:(asia-southeast2-b asia-southeast2-c)"   [--sort-by -->we can use in plave --filter]
+gcloud compute zones list --filter=region:us-west2
+gcloud compute zones list --sort-by=region
+gcloud compute zones list --sort-by=~region
+gcloud compute zones list --uri
+gcloud compute regions describe us-west4
+ 
+gcloud compute instance-templates list
+gcloud compute instance-templates create instance-template-from-command-line
+gcloud compute instance-templates delete instance-template-from-command-line
+gcloud compute instance-templates describe my-instance-template-with-custom-image
+
+
+
+
+gcloud compute instances create command in depth:
+------------------------------------------------
+Creating Compute Instances.
+command:
+  gcloud compute instances create [Name]
+    options:
+    -------
+    1)--machine type(default type is n1-standard-1 -gcloud compute machine-types list)
+    2)--custom-cpu --custom-memory --custom-vm-type(n1/n2) (Custom Machine)
+         ex:--custom-cpu 6 --custom-memory 3072MB --custom-vm-type n2
+    3)--image or --image-family or --source-snapshot or --source-instance-template or --source-machine-image(beta)
+    4)--service-account or --no-service-account
+    5)--zone=us-central1-a
+    6)--tags(List of tags - Allow network firewall rules and routes to be applied to VM instances.)
+    7)--preemptible (if you want preemptible VMs so you can use that)
+    8)--restart-on-failure(default) --no-restart-on-failure --maintenance-policy(MIGRATE(default)/TERMINATE) 
+    9)--boot-disk-size, --boot-disk-type --boot-disk-auto-delete(default) --no-boot-disk-auto-delete
+    10)--deletion-protection --no-deletion-protection(default)
+    11)--metadata/metadata-from-file startup-script/startup-script-url
+           # --metadata-from-file startup-script=/local/path/to/script/startup OR --metadata startup-script="echo 'hello       
+            world'" (ontime  launching)
+           # shutdown script (write script after shutdwom Vm)
+           
+    12)--network --subnet --network-tier(PREMIUM(default),STANDARD)
+    
+    
+gcloud instance templates
+--------------------------
+gcloud compute instance-templates list
+gcloud compute instance-templates create instance-template-gcloud(name)
+gcloud compute instance-templates describe instance-template-gcloud
+
+gcloud compute instances create my-instance-from-template --source-instance-template=my-instance-template-gcloud  -->creating instance using instance template
+
+gcloud compute instances stop my-instance-from-template
+
+gcloud compute instances list
+
+    
+    
+
+
+           
+    
+    
+      
+    

@@ -1,4 +1,5 @@
 #Date:12/09/24
+#################Section3######################
 
 Google Compute Engine(Like EC2 in  aws):
 ----------------------------------------
@@ -68,6 +69,7 @@ note:you are billed for static ip when your not using well.
 *if you dont want static ip release the static ip.
 
 
+
 Simply VM HTTP server setup
 -----------------------------
 We can reduce the no of steps in creating an VM instance and setting up a HTTP server
@@ -130,6 +132,138 @@ Note:You never create an image from disks of running instance.(Stop the instance
 step:
 #creating an custom image using disks and used that custom image by creating an VM instance directly or with the help of custom image we can create template instance and using that template instance we can create VM instance
  
+
+Trouble Shooting of Launch of Apache on GCP Virtual Machine
+--------------------------------------------------------
+When you launch an instance and trying to access the external ip if it not working.what are the steps that has to be taken.
+*click on external ip its wrking or not.
+*if external ip si not loading check the HTTP traffic is configured in VM or not.
+*click the SSH if SSh is open properly so that apache server is working
+*check the root file is present (SSH)--->ls /var/www/html
+*check that root file content (SSH)---->cat /var/www/html/index.html
+*if content is there in that and start the apache service to work.
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+#################Section4######################
+
+Google-Compute(Optimising Cost and Performance in GCP)
+-----------------------------------------------------
+
+Sustained used discounts:
+----------------------
+
+*Automatic discounts for VM instances for significat portion of billing month.
+*it is applicable for instances created by Google Kubernetes Engine and Compute Engine
+Note-->#Does not apply on certain machine types(Ex:E2 and A2)
+       #Does not apply to the VMs created by App Engine Flexible and data flow.
+       
+Commited used discounts:(Reserved instances in aws)
+-----------------------
+
+*For workloads with predictable resource needs
+*Commit for 1 or 3 years(if you can puchase vm for 1 year or 3 years depending on your requirement)
+*Upto 70 % discount based on machine type and GPUs
+*it is applicable for instances created by Google Kubernetes Engine and Compute Engine
+Note-->#Does not apply to the VMs created by App Engine Flexible and data flow.
+
+Preemptible VMs:-->24 hours vm 
+------------------
+*Short-lived Cheaper(upto 80%) compute instances
+   #Can be stopped by GCP any time(preempted) within 24 hours.
+   #Instances get 30 second warning(to save anything they want to save)
+   
+*Use Preempt VMs if:
+   #your applications are fault tolerant(you stop and start vm any point of time).
+   #you are very cost sensitive.
+   #your workload is not immediate(Ex:non immediate batch processing jobs)
+   Note: not availabe always,no SLA cannot be migrated to regular Vms,No automatic restart,Free tier credits not applicable.
+   
+*preemptible Vms are similar to spot instances.
+ 
+where it is?-->when you configure an instance you will have an option Advaced details-->Management-->Availability Policy-->Preemptiiblity
+(these Vm is not in free tier)
+
+
+Spot Vms:
+---------
+*Latest version of preemptible VMs
+*Spot Vms doesn't have maximum runtime
+  #compare to traditional preemptible Vms which have an maximum runtime 24 hours.
+  
+*Other features are similar like preemptible VMs.
+  #May be reclaimed at any time with 30-second notice.
+  #Not always availabe
+  #Dynamic-Pricing:60-91% discount compared to on demand VMS.
+  #Free tier credits not applicable.
+  
+*Spot Vms is only terminated when compute Engine needs the resources elsewhere
+
+
+Live Migration And Availability policy:
+-----------------------------------
+*while keeping the instance running.so on time host system need to be updated.(a software or hardware update is needs to be performed).
+*Live Migration:
+      #your running instance is migrated to another host in same zone.
+      #It doesn't change any attributes and properties of VM.
+      #Supported for instances even having local SSDs.
+      #Not Supported for GPUs and preemptible instances.
+      
+*Availability policy:-->important Configuration
+    #On host maintainence:what should happen during periodic insfrastructure maintenance?
+       ->Migrate(default):Migrate VM instance to other hardware
+       ->Terminate:Stop the VM instance.
+    #Automatic restart:Restart instances if they are terminated due to non-user initiated reasons(maintenence event,hardware failures etc.)
+       
+    	
+
+Custom Machine Type:
+--------------------
+*When predefined VM options are not suitable for our workload so we can create "custom machine Type".
+*With the help of Custom Machine Type you can choose vCPUs,memory and GPUs.
+    #choose between E2,N2 or N1 machine types
+    #Supports a wide variety of operating Systems:CentOs,CoreOs,Debian,Red hat,Ubuntu,Windows etc.
+*if you choose an custom image type you can billed only for vCPUs,memory provisioned to each instance.
+
+
+Graphic Processing Unit(GPUS):
+------------------------------
+if you want to accelerate the math intensive and graph intensive workloads for AI/ML GPUs is used.
+
+
+Scenarios and Solutions:
+------------------------
+Scenario1:
+what are the prerequisites to be able to create a VM instance?
+solution:
+1.Project
+2.Billing Account
+3.Compute ENgine APIs shouble be enabled
+
+Scenario2:
+If you want dedicated hardware for your compliance,licensing and management needs(entire hardware to create VMS)
+solution:
+Sole-tenant nodes option in Compute Engine.
+
+Scenario3:
+I have 1000s of VM and I want to automate OS patch management,OS Inventory management and OS Configuration management(manage software installed) 
+Solution:
+Use "VM manager"-->Os Policies in VM instances option inside of Compute Engine.
+
+Scenario3:
+You want to login to your VM instance to install software
+Solution:
+You can SSH into it.
+
+Senario4:
+you dont want to expose an VM to internet
+Solution:
+Do not assign an External Ip address.
+
+Scenario5:
+you want to allow HTTP traffic to your VM
+Solution:
+Configure firewall rules
 
 
 

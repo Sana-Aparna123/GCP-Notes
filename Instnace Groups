@@ -1,0 +1,88 @@
+Instance Group:
+-----------------
+1.create template
+2.autoscaling
+3.auto healing
+
+types:managed instance group(mgi) and umanaged instance group.
+-----
+Note:
+*every will use managed instance group for the same configuration for all Vms.
+*unmanaged instances is used for different configuration requirement for VMs.
+
+
+Scenario                                                                     Solution
+-----------                                                                     ----------
+you want MIG managed application to survive                                    Create Multiple zone MIG(or REgional MIG)
+zonal failures
+---------------------------------------------------------------------------------------------------------------------------------
+you want to create VMs of different configurations                             Create un-managed instance group
+in same group
+---------------------------------------------------------------------------------------------------------------------------------
+you want preserve VM state in an MIG                                           Stateful Maganged instance Group
+---------------------------------------------------------------------------------------------------------------------------------
+you want high availability in an MIG even there                                Use an instance template with availability policy
+are hardware/software updates                                                  automatic restart:enabled & non-host maintenance:migrate
+                                                                               Ensures live migration and automatic restart.
+------------------------------------------------------------------------------------------------------------------------------------
+you want unhealthy instances automatically replaced                            Configure health check on MIG(self healing)
+-------------------------------------------------------------------------------------------------------------------------------------
+Avoid frequent scale up & downs                                                Cool-down period/Intial delay option.
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+Commands:
+
+gcloud compute instances create my-test-vm --source-instance-template=my-instance-template-with-custom-image
+gcloud compute instance-groups managed list
+gcloud compute instance-groups managed delete my-managed-instance-group
+gcloud compute instance-groups managed create my-mig --zone us-central1-a --template my-instance-template-with-custom-image --size 1
+gcloud compute instance-groups managed set-autoscaling my-mig(instance group name) --max-num-replicas=2 --zone us-central1-a
+gcloud compute instance-groups managed stop-autoscaling my-mig --zone us-central1-a
+gcloud compute instance-groups managed resize my-mig --size=1 --zone=us-central1-a
+gcloud compute instance-groups managed recreate-instances my-mig --instances=my-mig-85fb --zone us-central1-a
+gcloud compute instance-groups managed delete my-managed-instance-group --region=us-central1
+Update specific instances:
+----------------------------
+gcloud compute instance-groups managed update-instances my-mig --instances=instance_name1,instance_name2
+            #--minimal-action=none(default)/refresh/replace/restart
+            #--most-disruptive-allowed-action=none(default)/refresh/replace/restart
+
+Update Instance template:
+------------------------
+gcloud compute instance-groups managed set-instance-template my-mig --template=new_template_name
+     #After updating the instance template,you can trigger roll out of the new template using update-instances,recreate-instances or rolling-action-start-update commands
+     
+     
+rolling action:
+---------------
+if you want to manage new release-v1 to v2-without downtime
+gcloud compute instance-groups managed rolling-action
+ex:gcloud  compute instance-groups managed rolling-action restart my-mig  [restart-(stop,start)]
+         #--max-surge=5 or 10%(maximum no of instances updated at a time)
+         
+   gcloud  compute instance-groups managed rolling-action replace my-mig  [replace-(delete,recreate)]
+         #--max-surge=5 or 10%(maximum no of instances updated at a time)
+         #--max-unavailable=5 or 10%(maximum no of instances that can be down for the update)
+         #--replacement-method=recreate/substitute [substitute(default0-creates instances with new names,recreate-reuses names]
+         
+updates instances on new template:
+          #compute instance-groups managed rolling-action start-update my-mig --vesion=template=template_name   [basic version]
+           #compute instance-groups managed rolling-action start-update my-mig --vesion=template=template_name1 --canary-version=template=
+           template_name2,target-size=10%   [canary version]
+          
+          
+
+for health check:
+--health-check=url of health check
+--initial-delay
+
+for auto healing:
+-----------------
+gcloud compute instance-groups managed update my-mig
+
+--initial-delay
+--health-check
+
+
+                                                                             

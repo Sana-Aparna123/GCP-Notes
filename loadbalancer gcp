@@ -1,0 +1,22 @@
+Load Balancer:
+------------
+
+Scenario                                                        Solution
+-----------------------------------------------------------------------------------------------------------------------------------
+You want onlu healthy instances to recieve                     Configure health check
+traffic
+-----------------------------------------------------------------------------------------------------------------------------------
+you want high availability for your VM instances.              Create multiple MIGs for you VM instances im multiple regions.Load
+                                                               balance using load balancer.
+-------------------------------------------------------------------------------------------------------------------------------------
+you want to route request to multiple microservices             Create individual MIGs and backends for each microservice.
+using the same load balancer                                    Create host and path rules to redirect the specific microservice.
+                                                                Backend based on path(/microservice-a,/microservice-b etc.)
+                                                                you can route to a backend cloud storage as well.
+-------------------------------------------------------------------------------------------------------------------------------------
+you want to load balance Global external HTTPs traffic          Choose External HTTP(S) load balancer
+across backend instances,across multiple regions. 
+--------------------------------------------------------------------------------------------------------------------------------------
+You want SSl Termination for Global non-HTTPS traffic with      Choose SSL proxy load balancer.
+load balancing.   
+------------------------------------------------------------------------------------------------------------------------------------
