@@ -15,6 +15,52 @@ Googte Kubernetes Engine (GRE)
 
 * Provides support for Persistent disks and Local SSD
 
+-------------------------------------------------------
+
+* Cluster: Group of Compute Engine instances:
+
+■ Master Node(s) - Manages the cluster
+
+■ Worker Node(s) - Run your workloads (pods)
+
+* Master Node (Control plane) components:
+
+■API Server Handles all communication for a K8S cluster (from nodes and outside)
+
+■ Scheduler - Decides placement of pods
+
+■ Control Manager replicasets
+
+Manages deployments &
+
+■ etcd - Distributed database storing the cluster state
+
+* Worker Node components:
+
+* Runs your pods
+
+■ Kubelet node(s)
+
+Manages communication with master
+
+-------------------------------
+
+* HARDWARE (Cluster)
+
+■ Master Node(s) - Manages the cluster
+
+■ Worker Node(s) - Run your workloads (as pods)
+
+■Node pool-Group of nodes in a cluster with the same configuration
+
+* SOFTWARE
+
+* Pods Smallest deployable unit in Kubernetes. Deployed to Worker Node(s).
+
+■ Deployments - Manage Pods
+
+■ Service - Expose Deployments
+
 
 
 
@@ -50,6 +96,7 @@ kubectl get services
 kubectl get replicasets
 kubectl get pods
 kubectl delete pod hello-world-rest-api-58dc9d7fcc-8pv7r
+kubectl logs
  
 kubectl scale deployment hello-world-rest-api --replicas=1
 kubectl get replicasets
