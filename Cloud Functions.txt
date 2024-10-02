@@ -1,0 +1,37 @@
+Cloud Functions - Concepts:
+——————————————
+
+1.Event: Upload object to cloud storage
+
+2.Trigger: Respond to event with a Function call 
+*Trigger-Which function to trigger when an event happens?
+
+*Functions - Take event data and perform action?
+
+3.Events are triggered from
+
+*Cloud Storage
+
+*Cloud Pub/Sub
+
+*HTTP POST/GET/DELETE/PUT/OPTIONS
+
+*Firebase
+
+*Cloud Firestore
+
+*Stack driver logging
+
+
+Cloud Functions - Remember
+———————————————
+
+1.No Server Management: You dont need to worry about scaling or availability of your function
+
+2.Cloud Functions automatically spin up and back down in response to events
+
+* They scale horizontally!
+
+3.Cloud Functions are recommended for responding to events:
+
+*Cloud Functions are NOT ideal for long running processes
