@@ -1,0 +1,18 @@
+Cloud KMS: KMS means Key Management service
+----------------
+*Cloud Kms which is a serivice in google cloud is used to create and manage cryprographic keys(symmetric and asymmetric)
+
+*we can also control their use in your applications and GCP Services.
+*Provides an APi ro encrypt,decrypt or sign data
+*allows you to use cryptographic keys which is used on premises.
+*KMS integrated with all GCP services that data data encryption:
+   1.google-managed key:No Configuration required
+   2.Customer-manged key:use key from KMS
+   3.Customer-supplied key:Provide your own key
+   
+Demo:
+1.Enable api like google cloud KMS api
+2.go to KMs->cryprographic keys
+3.Create a key ring which is an folder to store all keys or attach multiple keys.
+
+
