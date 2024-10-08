@@ -1,0 +1,128 @@
+Google Storage Concepts:
+--------------------------
+*harddisk storage type--->Block Storage
+*File created and share on network--->File Storage
+
+Block Storage:
+------------
+*harddisk attaches to computer
+  1.only one block storage can be connected to  one VM.(traditional way)
+  2.if you only read only block storage devices so yoy can attach it to the multiple VMs.
+  
+*However you can connect multiple different block storage devices to one VM
+
+Used as:
+
+* Direct-attached storage (DAS) - Similar to a hard disk
+* Storage Area Network (SAN) - High-speed network connecting a pool of storage devices
+  
+  
+  
+  
+  
+  
+  
+persistant disks:
+-------------------
+three types:
+1.standard-->HDD-->pd-standard-->good for big data/batch processing and not good for transaction apps-->cheap
+2.Balanced-->SSD-->pd-balanced-->good for big data/batch processing and  good for transaction apps-->some cost than standard
+3.SSD-->pd-SSD-->very good for big data/batch processing and very good for transaction apps-->very expensive
+
+
+
+Persistent Disks - Snapshots
+--------------------------------
+
+* Take point-in-time snapshots of your Persistent Disks
+
+* You can also schedule snapshots (configure a schedule):
+
+■ You can also auto-delete snapshots after X days
+
+* Snapshots can be Multi-regional and Regional
+
+* You can share snapshots across projects
+
+* You can create new disks and instances from snapshots
+
+* Snapshots are incremental:
+
+■ Deleting a snapshot only deletes data which is NOT needed by other snapshots
+
+* Keep similar data together on a Persistent Disk:
+
+■ Separate your operating system, volatile data and permanent data
+
+■ Attach multiple disks if needed
+
+■ This helps to better organize your snapshots and images
+
+Persistent Disks - Snapshots - Recommendations
+---------------------------------------------
+
+* Avoid taking snapshots more often than once an hour
+
+* Disk volume is available for use but Snapshots reduce performance
+
+■ (RECOMMENDED) Schedule snapshots during off-peak hours
+
+* Creating snapshots from disk is faster than creating from images:
+
+■ But creating disks from image is faster than creating from snapshots
+
+■ (RECOMMENDED) If you are repeatedly creating disks from a snapshot:
+
+* Create an image from snapshot and use the image to create disks
+
+* Snapshots are incremental:
+
+■ BUT you don't lose data by deleting older snapshots
+
+■ Deleting a snapshot only deletes data which is NOT needed by other snapshots
+
+■ (RECOMMENDED) Do not hesitate to delete unnecessary snapshots
+
+
+playing with machine image:
+--------------------------------
+
+* (Remember) Machine Image is different from Image
+
+* Multiple disks can be attached with a VM:
+
+■ One Boot Disk (Your OS runs from Boot Disk)
+
+■ Multiple Data Disks
+
+* An image is created from the boot Persistent Disk
+
+* HOWEVER, a Machine Image is created from a VM instance:
+
+■ Machine Image contains everything you need to create a VM instance:
+
+* Configuration
+
+* Metadata
+
+* Permissions
+
+* Data from one or more disks
+
+ **Recommended data backups,instance cloning and replication.
+ 
+ 
+ playing the disks in gcloud:
+ ----------------------------
+ gcloud compute disks list
+ gcloud compute disk-types list
+ 
+ 
+ 
+ 
+ 
+ NAME: pd-standard
+ZONE: us-east7-c
+VALID_DISK_SIZES: 10GB-65536GB
+
+  
