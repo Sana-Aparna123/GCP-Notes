@@ -121,8 +121,6 @@ playing with machine image:
  
  
  
- NAME: pd-standard
-ZONE: us-east7-c
-VALID_DISK_SIZES: 10GB-65536GB
+ 
 
   
