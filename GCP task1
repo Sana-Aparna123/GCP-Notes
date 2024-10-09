@@ -1,0 +1,120 @@
+Task:
+dockerimage--->artifcats repository--->kubernetes--->autoscale
+
+
+
+export PROJECT_ID=my-project-123-437906
+echo $PROJECT_ID
+gcloud config set project $PROJECT_ID
+gcloud artifacts repositories create my-repo --repository-format=docker --location=us-central1 --description="docker repo"
+ ls
+sudo mkdir hello-world
+cd hello-world
+sudo nano hello.js
+-----------------
+
+// hello.js
+const http = require('http');
+const port = 8080;
+
+const requestHandler = (request, response) => {
+  response.end('Hello, World!');
+};
+
+const server = http.createServer(requestHandler);
+server.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+
+
+sudo nano package.json
+------------------------
+{
+  "name": "hello-world",
+  "version": "1.0.0",
+  "main": "hello.js",
+  "dependencies": {}
+}
+
+sudo nano Dockerfile
+-------------------
+# Use the official Node.js image as the base image
+FROM node:14
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the package.json and hello.js files to the container
+COPY package.json .
+COPY hello.js .
+
+# Expose the port the application will run on
+EXPOSE 8080
+
+# Start the application
+CMD ["node", "hello.js"]
+
+
+docker build -t us-central1-docker-pkg.dev/$PROJECT_ID/my-repo/hello-world:v1 . or  docker build -t hello-world .
+
+gcloud artifacts repositories add-iam-policy-binding my-repo --location=us-central1 --member=serviceAccount:1047873215102-compute@developer.gserviceaccount.com --role="roles/artifactregistry.reader"
+
+gcloud auth configure-docker us-central1-docker.pkg.dev
+
+docker tag hello-world us-central1-docker.pkg.dev/my-project-123-437906/my-repo/hello-world:v1
+
+pushing the docker image to artifact repository:
+docker push us-central1-docker.pkg.dev/my-project-123-437906/my-repo/hello-world:v1
+
+creating an gke cluster:
+gcloud container clusters create-auto my-hello-world-deployment-cluster
+
+
+gcloud container clusters get-credentials my-hello-world-deployment-cluster --region=us-central1
+
+kubectl create deployment my-hello-world-deployment --image=us-central1-docker-pkg.dev/my-project-123-437906/my-repo/hello-world 
+
+kubectl get deployments
+  
+kubectl describe deployment my-hello-world-deployment 
+
+kubectl scale deployment my-hello-world-deployment --replicas=3
+
+ kubectl autoscale deployment my-hello-world-deployment --cpu-percent=80  --min=1 --max=5
+ 
+ kubectl get pods
+
+to expose service outside of internet:
+kubectl expose deployment my-hello-world-deployment --name=my-hello-world-deployment-service --type=LoadBalancer --port=80 --target-port 8080
+
+kubectl get services-->hit the loadbalacer service external ip on browser.
+
+
+
+
+
+
+modifying the code and building new version and run it kunernetes
+-----------------------------------------------------------------
+
+docker build -t us-central1-docker.pkg.dev/my-project-123-437906/my-repo/hello-world:latest .
+
+docker images
+
+docker tag hello-world:latest us-central1-docker.pkg.dev/my-project-123-437906/my-repo/hello-world:latest
+
+gcloud auth configure-docker us-central1-docker.pkg.dev
+
+docker push us-central1-docker.pkg.dev/my-project-123-437906/my-repo/hello-world
+
+kubectl get deployment my-hello-world-deployment -o yaml
+
+kubectl set image deployment/my-hello-world-deployment hello-world-sha256-1=us-central1-docker.pkg.dev/my-project-123-437906/my-repo/hello-world:latest
+
+watch kubectl get pods
+
+kubectl get pods
+
+kubectl get services
+
+
