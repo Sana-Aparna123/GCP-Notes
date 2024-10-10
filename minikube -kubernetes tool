@@ -1,0 +1,184 @@
+*installing docker
+*kubectl installation
+*installing minikube
+--------------------
+commands:
+----------
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
+
+sudo dpkg -i minikube_latest_amd64.deb
+
+sudo usermod -aG docker $USER  -->adding user to docker group
+
+newgrp docker
+
+docker ps
+
+minikube start
+
+deploying helloworld application:
+-------------------------------------
+1.sudo mkdir hello-world-app && cd hello-world-app
+
+2.sudo vi index.html 
+-----------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Hello World</h1>
+</body>
+</html>
+
+3.sudo vi Dockerfile
+---------------------
+FROM nginx:latest
+
+COPY index.html /usr/share/nginx/html/index.html
+
+
+
+4.minikube start
+
+5.minikube status
+
+6.eval $(minikube -p minikube docker-env)
+
+7.docker build -t hello-world-app:1.0 .
+ 
+8.docker images
+
+9.sudo vi hello-world-deployment.yaml
+-------------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-world
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      containers:
+      - name: hello-world
+        image: hello-world-app:1.0
+        ports:
+        - containerPort: 80
+
+
+
+
+10.kubectl apply -f hello-world-deployment.yaml
+
+11.kubectl get deployment
+
+12.kubectl get pods
+
+13.kubectl expose deployment hello-world-deployment --type=NodePort --port=80
+
+14.minikube service hello-world-deployment --url
+
+15.kubectl get services
+
+
+modifying the index.html file and rebuild image and redeploying that image:
+------------------------------------------------------------------------------
+1.index.html
+----------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .login-container {
+            width: 300px;
+            margin: 100px auto;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .login-container input[type="text"],
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .login-container button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Login</h2>
+    <form action="#">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="Enter your username" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+        <button type="submit">Login</button>
+    </form>
+</div>
+
+</body>
+</html>
+
+
+2.docker build -t hello-world-app:2.0 .
+
+3.docker images
+
+4.kubectl set image deployment/hello-world-deployment hello-world=hello-world-app:2.0  [here hello-world is name of container defined in yaml file]
+
+5.kubectl get pods
+
+6.minikube service hello-world-deployment --url
+
+
+
+
+
+
+
+
+
