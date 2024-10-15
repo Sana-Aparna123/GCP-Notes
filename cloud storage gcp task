@@ -1,0 +1,196 @@
+task:
+---------
+Objectives
+In this lab, you learn how to perform the following tasks:
+
+*Create and use buckets
+*Set access control lists to restrict access
+*Use your own encryption keys
+*Implement version controls
+*Use directory synchronization
+*Share a bucket across projects using IAM
+
+
+process:
+---------------
+
+creating an bucket in cloud storage
+
+export BUCKET_NAME_1=my-bucket-my-project-123-437906-1
+echo $BUCKET_NAME_1
+
+ sudo curl https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/ClusterSetup.html -o /home/aparnassana2001/setup.html
+ 
+curl https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/ClusterSetup.html -o ~/setup.html
+
+ ls
+ 
+curl https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/ClusterSetup.html -o ~/setup.html
+
+ls
+
+cp setup.html setup2.html
+
+cp setup.html setup3.html
+
+ls
+
+gsutil cp setup.html gs://my-bucket-my-project-123-437906-1/
+
+ls
+
+gsutil acl get gs://my-bucket-my-project-123-437906-1/setup.html >acl.txt
+
+cat acl.txt
+
+gsutil acl set gs://my-bucket-my-project-123-437906-1/setup.html >  acl2.txt
+
+gsutil acl set private gs://my-bucket-my-project-123-437906-1/setup.html 
+
+gsutil acl get gs://my-bucket-my-project-123-437906-1/setup.html >acl2.txt
+
+cat acl2.txt
+
+gsutil acl ch -u AllUsers:R gs://$BUCKET_NAME_1/setup.html
+
+gsutil acl get gs://$BUCKET_NAME_1/setup.html > acl3.txt
+
+cat acl3.txt
+  
+rm setup.html -->removing the file without knowing on local cloud shell
+  
+gsutil cp gs://$BUCKET_NAME_1/setup.html setup.html -->retrieve the file from bucket(backup)
+
+generating the customer supplied encryption key
+---------------------------------------------
+ python3 -c 'import base64, os; print(base64.b64encode(os.urandom(32)).decode())'  -->create an encryption key and copy it
+ 
+ la -al -->check that there is an .boto file or not
+  
+ gsutil config -n -->this command creates .boto file
+ 
+ 
+ nano .boto
+ -----------
+ encryption_key=Y8N/B/mHW4ybN73Ccz+R+0GZQlZOeiAsZiC68DkJyYU=  -->search it and uncomment encryption key and paste that encryption key before you copied that and close the file
+ 
+ 
+ gsutil cp setup2.html gs://$BUCKET_NAME_1/  -->Copying these files to bucket
+ 
+ gsutil cp setup3.html gs://$BUCKET_NAME_1/
+ 
+ rm setup* -->removing setup1 setup2 and setup3 files at a time in cloud shell.
+ 
+ gsutil cp gs://$BUCKET_NAME_1/setup* ./ -->Copying these three files from bucket to cloud shell
+ 
+ cat setup3.html  -->we can get back the file even it is encrypted.
+ 
+ nano .boto
+ -------------
+ adding decryption key:which is same of encryption key
+ decryption_key1=Y8N/B/mHW4ybN73Ccz+R+0GZQlZOeiAsZiC68DkJyYU=
+ 
+ 
+ python3 -c 'import base64, os; print(base64.b64encode(os.urandom(32)).decode())' --generating new key
+ 
+ nano .boto
+ -----------
+ copy the key and adding new encryption key and commenting the previous encryption key
+ 
+ gsutil rewrite -k gs://$BUCKET_NAME_1/setup2.html -->rewriting the key
+ 
+ goto nano .boto file comment the decryption key1 and close the file
+ 
+ gsutil cp gs://$BUCKET_NAME_1/setup2.html recover2.html --its working
+ 
+ gsutil cp gs://$BUCKET_NAME_1/setup3.html recover3.html -->not working
+ 
+ 
+ 
+ 
+ 
+ lifecycle policy management
+ -----------------------------
+ 
+ gsutil lifecycle get gs://$BUCKET_NAME_1 -->checking that lifecycle is present or not for bucket.
+ 
+ create json lifecycle policy file:
+ ---------------------------------
+ 
+ nano life.json
+ -------------
+ {
+  "rule":
+  [
+    {
+      "action": {"type": "Delete"},
+      "condition": {"age": 31}
+    }
+  ]
+}
+
+
+
+gsutil lifecycle set life.json gs://$BUCKET_NAME_1 -->setting the lifecycle policy to bucket
+
+gsutil lifecycle get gs://$BUCKET_NAME_1
+
+Enabling versioning
+-----------------------
+
+gsutil versioning get gs://$BUCKET_NAME_1
+
+gsutil versioning set on gs://$BUCKET_NAME_1 -->setting verisoning to bucket
+
+gsutil versioning get gs://$BUCKET_NAME_1
+
+
+
+*Use directory synchronization
+
+ls -al setup.html
+
+deleting some two links in setup.html file to reduce file size
+
+gsutil cp -v setup.html gs://$BUCKET_NAME_1  -->copying the file to bucket
+
+remove some other links in setup.html  and then copy the setup.html file to bucket 
+
+gsutil cp -v setup.html gs://$BUCKET_NAME_1 
+
+gsutil ls -a gs://$BUCKET_NAME_1/setup.html  -->versions of setup.html file
+
+output:
+gs://my-bucket-my-project-123-437906-1/setup.html#1728561217825994
+gs://my-bucket-my-project-123-437906-1/setup.html#1728625965323494
+gs://my-bucket-my-project-123-437906-1/setup.html#1728626192724591
+
+
+export VERSION_NAME=gs://my-bucket-my-project-123-437906-1/setup.html#1728561217825994-->Setting environment variable to oldest version.
+echo $VERSION_NAME
+
+gsutil cp $VERSION_NAME recovered.txt
+
+ls -al setup.html
+
+ls -al recovered.txt
+
+mkdir firstlevel
+
+mkdir ./firstlevel/secondlevel
+
+cp setup.html firstlevel
+
+cp setup.html firstlevel/secondlevel
+
+gsutil rsync -r ./firstlevel gs://$BUCKET_NAME_1/firstlevel
+
+gsutil versioning get gs://$BUCKET_NAME_1
+
+
+ 
+
+ 
+ 
+ 
+ 
