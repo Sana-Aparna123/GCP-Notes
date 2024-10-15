@@ -1,0 +1,52 @@
+Cloud sql task
+----------------
+Objectives
+In this lab, you learn how to perform the following tasks:
+
+*Create a Cloud SQL database
+*Configure a virtual machine to run a proxy
+*Create a connection between an application and Cloud SQL
+*Connect an application to Cloud SQL using Private IP address
+
+
+task2:
+-----
+
+In this lab, you learn how to perform the following tasks:
+
+Create two VPC networks and instances.
+Configure HA VPN gateways.
+Configure dynamic routing with VPN tunnels.
+Configure global dynamic routing mode.
+Verify and test HA VPN gateway configuration.
+
+
+VPN connection:
+---------------
+two types of vpn connection
+1.HA VPN
+2.classic VPN
+
+Interconnect and peering:
+-------------------------
+
+*interconnect is used to access internal ips of google cloud
+*peering is used to access the public ips of google cloud
+
+interconnect:
+----------
+1.cloud VPN
+2.Dedicated interconect
+3.partner interconnect
+4.cross cloud interconnect
+
+peering:
+---------
+1.Direct peering-->using pops or edge locations with 10gbps per link
+2.carrier peering-->through service provider with based on partner offering
+
+
+
+
+
+
