@@ -1,0 +1,322 @@
+Gcloud:
+-------------
+*Command Line Interface to interract with Google Cloud Resources.
+*Most of the GCp services are also handled from CLI using Gcloud like Compute engine Vms,managed instance groups,databases etc.
+* we can also do the CRUD operations from existing resources and perform actions like deployment etc.
+*Some GCP services have specific tool:
+    #Cloud Storage-gsutil CLI
+    #Cloud Bigquery-bq
+    #Cloud Bigtable-cbt
+    #Kubernetes-Kubectl(In addition to Gcloud which is used to manage clusters) 
+    
+    
+ Installation:
+ ------------
+ *Gcloud is a part of Google Cloud SDK.
+     #Google cloud SDK requires Python
+     #Instructions to install Cloud SDK(and Gcloud)-->https://cloud.google.com/sdk/docs/install
+    
+*you can also use Gcloud Cloud Shell
+    In cloud shell:
+    *gcloud --version
+    *gcloud init (initialize or reinitialize gcloud)-->it will show the existing confuguration.
+        1.Authorize gcloud to use ur account credentials.
+        2.Setup Configuration.
+    *gcloud config list -list all properties of the active configuration.
+    
+    
+    
+  Commands:
+  -------------  
+Here are some of the commands we would execute in the next few steps:
+
+You can refer back to this if you have problems. Good Luck.
+
+gcloud config list compute/region
+gcloud config list compute/zone
+gcloud config list project or gcloud config list core/project
+
+
+
+gcloud config set:
+----------------
+Set the specific property in your active configuration.
+Syntax: 
+        gcloud config set SECTION/PROPERTY VALUE
+   
+ Commands:
+ ------------
+   gcloud config set core/project VALUE
+   gcloud config set compute/region VALUE
+   gcloud config set compute/zone VALUE
+   gcloud config set core/verbosity VALUE (debug)
+   
+Note:core,compute-->sections and project,region,zone -->properties
+     specigying core is optional you can give directly like gcloud config set project VALUE
+     
+     
+   gcloud config set --help   --->get more details
+   
+To remove default configurations like which we set so we can use "unset" in the place of "set".
+
+
+Managing Multiple Configurations using Gcloud:
+-----------------------------------------------
+Scenario:you are working on multiple projects  from the same machine.You would want to be able to execute command using different configurations. 	
+      How do you specify this?
+      *   gcloud config configurations create/delete/describe/activate/list
+commands:
+----------
+gcloud config configurations create Name(configuration name)   
+gcloud config configurations list   -->it will list all the configurations.
+gcloud config configurations activate my-configuration(Name)  -->to switch previous configuration
+gcloud config list
+gcloud config configurations describe my-second-configuration -->it will display the content of my-second-configuration.
+      
+      
+gcloud command structure playing with services
+----------------------------------------------
+
+gcloud GROUP SUBGROUP ACTION ...
+   
+group-service that are using(ex:compute servive)
+subgroup-components inside of service(instances,images,instance templates,machine types,region,zones etc.)
+action-action performed in that service(create,list,start,stop or describe etc.)
+
+
+example:
+gcloud compute instances list
+gcloud compute instances create
+gcloud compute instances create my-first-instance-from-gcloud
+gcloud compute instances describe my-first-instance-from-gcloud
+gcloud compute instances delete my-first-instance-from-gcloud
+gcloud compute zones list
+gcloud compute regions list
+gcloud compute machine-types list
+ 
+gcloud compute machine-types list --filter zone:asia-southeast2-b
+gcloud compute machine-types list --filter "zone:(asia-southeast2-b asia-southeast2-c)"   [--sort-by -->we can use in plave --filter]
+gcloud compute zones list --filter=region:us-west2
+gcloud compute zones list --sort-by=region
+gcloud compute zones list --sort-by=~region
+gcloud compute zones list --uri
+gcloud compute regions describe us-west4
+ 
+gcloud compute instance-templates list
+gcloud compute instance-templates create instance-template-from-command-line
+gcloud compute instance-templates delete instance-template-from-command-line
+gcloud compute instance-templates describe my-instance-template-with-custom-image
+
+
+
+
+gcloud compute instances create command in depth:
+------------------------------------------------
+Creating Compute Instances.
+command:
+  gcloud compute instances create [Name]
+    options:
+    -------
+    1)--machine type(default type is n1-standard-1 -gcloud compute machine-types list)
+    2)--custom-cpu --custom-memory --custom-vm-type(n1/n2) (Custom Machine)
+         ex:--custom-cpu 6 --custom-memory 3072MB --custom-vm-type n2
+    3)--image or --image-family or --source-snapshot or --source-instance-template or --source-machine-image(beta)
+    4)--service-account or --no-service-account
+    5)--zone=us-central1-a
+    6)--tags(List of tags - Allow network firewall rules and routes to be applied to VM instances.)
+    7)--preemptible (if you want preemptible VMs so you can use that)
+    8)--restart-on-failure(default) --no-restart-on-failure --maintenance-policy(MIGRATE(default)/TERMINATE) 
+    9)--boot-disk-size, --boot-disk-type --boot-disk-auto-delete(default) --no-boot-disk-auto-delete
+    10)--deletion-protection --no-deletion-protection(default)
+    11)--metadata/metadata-from-file startup-script/startup-script-url
+           # --metadata-from-file startup-script=/local/path/to/script/startup OR --metadata startup-script="echo 'hello       
+            world'" (ontime  launching)
+           # shutdown script (write script after shutdwom Vm)
+           
+    12)--network --subnet --network-tier(PREMIUM(default),STANDARD)
+    
+    
+gcloud instance templates
+--------------------------
+gcloud compute instance-templates list
+gcloud compute instance-templates create instance-template-gcloud(name)
+gcloud compute instance-templates describe instance-template-gcloud
+
+gcloud compute instances create my-instance-from-template --source-instance-template=my-instance-template-gcloud  -->creating instance using instance template
+
+gcloud compute instances stop my-instance-from-template
+
+gcloud compute instances list
+
+
+some additinal commands:
+--------------------------
+
+  390 gcloud config set project my-project-123-437906
+  391  gcloud config list
+  392  gcloud compute vpn-gateways create vpc-demo-vpn-gw1 --network vpc-demo --region "us-central1"
+  393  gcloud compute vpn-gateways delete vpc-demo-vpn-gw1 --network vpc-demo --region "us-central1"
+  394  gcloud compute vpn-gateways create on-rem-vpn-gw1 --network on-prem --region us-central
+  395  gcloud compute vpn-gateways create on-rem-vpn-gw1 --network on-prem --region us-central1
+  396  gcloud compute vpn-gateways list
+  397  gcloud compute vpn-gateways describe vpc-demo-vpn-gw1 region us-central1
+  398  gcloud compute vpn-gateways describe vpc-demo-vpn-gw1 --region us-central1
+  399  gcloud compute vpn-gateways decribe on-rem-vpn-gw1 --region=us-central1
+  400  gcloud compute vpn-gateways describe on-rem-vpn-gw1 --region=us-central1
+  401  gcloud compute routers create vpc-demo-router1 \ --region us-central1 
+  402  gcloud compute routers create vpc-demo-router1 \ --region us-central1 \ --network vpc-demo \ --asn 65001
+  403  gcloud compute routers create vpc-demo-router1     --region us-central1     --network vpc-demo     --asn 65001
+  404  gcloud compute routers on-prem-router2 --region us-central1 --network on-prem --asn 65002
+  405  gcloud compute routers create on-prem-router1     --region us-central1     --network on-prem     --asn 65002
+  406  openssl rand -base64 32
+  407  gcloud compute vpn-tunnels create vpc-demo-tunnel0     --peer-gcp-gateway on-rem-vpn-gw1     --region us-central1     --ike-version 2     --shared-secret "BiENlEjvjpzTy5wKYp3q9JjSFIIXdVwdz+8Lcl0VB9k="     --router vpc-demo-router1     --vpn-gateway vpc-demo-vpn-gw1     --interface 0
+  408  gcloud compute vpn-tunnels create vpc-demo-tunnel1     --peer-gcp-gateway on-rem-vpn-gw1     --region "REGION"     --ike-version 2     --shared-secret "BiENlEjvjpzTy5wKYp3q9JjSFIIXdVwdz+8Lcl0VB9k="     --router vpc-demo-router1     --vpn-gateway vpc-demo-vpn-gw1     --interface 1
+  409  gcloud compute vpn-tunnels create vpc-demo-tunnel1     --peer-gcp-gateway on-rem-vpn-gw1     --region us-central1     --ike-version 2     --shared-secret "BiENlEjvjpzTy5wKYp3q9JjSFIIXdVwdz+8Lcl0VB9k="     --router vpc-demo-router1     --vpn-gateway vpc-demo-vpn-gw1     --interface 1
+  410  gcloud compute vpn-tunnels create on-prem-tunnel0     --peer-gcp-gateway vpc-demo-vpn-gw1     --region us-central1     --ike-version 2     --shared-secret "BiENlEjvjpzTy5wKYp3q9JjSFIIXdVwdz+8Lcl0VB9k="     --router on-prem-router1     --vpn-gateway on-rem-vpn-gw1     --interface 0
+  411  gcloud compute vpn-tunnels create on-prem-tunnel1     --peer-gcp-gateway vpc-demo-vpn-gw1     --region us-central1     --ike-version 2     --shared-secret "BiENlEjvjpzTy5wKYp3q9JjSFIIXdVwdz+8Lcl0VB9k="     --router on-prem-router1     --vpn-gateway on-rem-vpn-gw1     --interface 1
+  412  gcloud compute routers add-interface vpc-demo-router1     --interface-name if-tunnel0-to-on-prem     --ip-address 169.254.0.1     --mask-length 30     --vpn-tunnel vpc-demo-tunnel0     --region us-central1
+  413  gcloud compute routers add-bgp-peer vpc-demo-router1     --peer-name bgp-on-prem-tunnel0     --interface if-tunnel0-to-on-prem     --peer-ip-address 169.254.0.2     --peer-asn 65002     --region us-central1
+  414  gcloud compute routers add-interface vpc-demo-router1     --interface-name if-tunnel1-to-on-prem     --ip-address 169.254.1.1     --mask-length 30     --vpn-tunnel vpc-demo-tunnel1     --region us-central1
+  415  gcloud compute routers add-bgp-peer vpc-demo-router1     --peer-name bgp-on-prem-tunnel1     --interface if-tunnel1-to-on-prem     --peer-ip-address 169.254.1.2     --peer-asn 65002     --region us-central1
+  416  gcloud compute routers add-interface on-prem-router1     --interface-name if-tunnel0-to-vpc-demo     --ip-address 169.254.0.2     --mask-length 30     --vpn-tunnel on-prem-tunnel0     --region us-central1
+  417  gcloud compute routers add-bgp-peer on-prem-router1     --peer-name bgp-vpc-demo-tunnel0     --interface if-tunnel0-to-vpc-demo     --peer-ip-address 169.254.0.1     --peer-asn 65001     --region us-central1
+  418  gcloud compute routers add-interface  on-prem-router1     --interface-name if-tunnel1-to-vpc-demo     --ip-address 169.254.1.2     --mask-length 30     --vpn-tunnel on-prem-tunnel1     --region us-central1
+  419  gcloud compute routers add-bgp-peer  on-prem-router1     --peer-name bgp-vpc-demo-tunnel1     --interface if-tunnel1-to-vpc-demo     --peer-ip-address 169.254.1.1     --peer-asn 65001     --region us-central1
+  420  gcloud compute routers describe vpc-demo-router1     --region us-central1
+  421  gcloud compute routers describe on-prem-router1     --region us-central1
+  422  gcloud compute firewall-rules create vpc-demo-allow-subnets-from-on-prem     --network vpc-demo     --allow tcp,udp,icmp     --source-ranges 192.168.1.0/24
+  423  gcloud compute firewall-rules create on-prem-allow-subnets-from-vpc-demo     --network on-prem     --allow tcp,udp,icmp     --source-ranges 10.1.1.0/24,10.2.1.0/24
+  424  gcloud compute vpn-tunnels list
+  425  gcloud compute vpn-tunnels describe vpc-demo-tunnel0       --region "REGION"
+  426  gcloud compute vpn-tunnels describe vpc-demo-tunnel0 --region us-central1 
+  427  gcloud compute vpn-tunnels describe vpc-demo-tunnel1 --region us-central1 
+  428  gcloud compute vpn-tunnels describe on-prem-tunnel0 --region us-central1 
+  429  gcloud compute vpn-tunnels describe on-prem-tunnel1 --region us-central1
+  430  gcloud config set project my-project-123-437906
+  431  gcloud config list
+  432  gcloud copute ssh on-prem-subnet-instance --zone us-central1-a
+  433  gcloud config set project my-project-123-437906
+  434  gcloud compute networks update vpc-demo --bgp-routing-mode GLOBAL
+  435  gcloud compute networks describe vpc-demo
+  436  gcloud compute ssh on-prem-subnet-instance --zone us-central1-a
+  437  gcloud compute vpn-tunnels delete vpc-demo-tunnel0  --region us-central1
+  438  gcloud compute vpn-tunnels delete on-prem-tunnel0  --region us-central1
+  439  gcloud compute vpn-tunnels list
+  440  gcloud compute vpn-tunnels delete on-prem-tunnel1 --region us-central1
+  441  gcloud compute vpn-tunnels delete Editor
+  442  (my-project-123-437906)
+  443  logout
+  444  gcloud compute vpn-tunnels list
+  445  gcloud compute vpn-tunnels delete vpc-demo-tunnel1 --region us-central1
+  446  gcloud compute routers list
+  447  gcloud compute routers remove-bgp-peer vpc-demo-router1 --peer-name bgp-on-prem-tunnel0 --region us-central1
+  448  gcloud compute routers remove-bgp-peer vpc-demo-router1 --peer-name bgp-on-prem-tunnel1 --region us-central1
+  449  gcloud compute routers remove-bgp-peer on-prem-router1 --peer-name bgp-vpc-demo-tunnel0 --region us-central1
+  450  gcloud compute routers remove-bgp-peer on-prem-router1 --peer-name bgp-vpc-demo-tunnel1 --region us-central1
+  451  gcloud compute routers list
+  452  gcloud compute routers delete on-prem-router1 --region us-central1
+  453  gcloud compute routers delete vpc-demo-router1 --region us-central1
+  454  gcloud compute vpn-gateways list
+  455  gcloud compute vpn-gateways delete on-rem-vpn-gw1 --region us-central1
+  456  gcloud compute vpn-gateways delete vpc-demo-vpn-gw1 --region us-central1
+  457  gcloud compute vpn-gateways list
+  458  gcloud compute ssh on-prem-subnet-instance --zone us-central1-a
+  459  gcloud compute instances delete on-prem-subnet-instance --zone us-central1-a
+  460  gcloud compute instances delete vpc-demo-subnet1-instance1 --zone us-east-1\
+  461  gcloud compute instances delete vpc-demo-subnet1-instance1 --zone us-east1-b
+  462  gcloud compute instances delete vpc-demo-subnet2-instance --zone us-central1-a
+  463  gcloud compute firewall-rules list
+  464  gcloud compute firewall-rules delete vpc-demo-allow-custom
+  465  gcloud compute firewall-rules delete on-prem-allow-subnets-from-vpc-demo
+  466  gcloud compute firewall-rules list
+  467  gcloud compute firewall-rules delete on-prem-allow-ssh-icmp
+  468  gcloud compute firewall-rules delete on-prem-allow-custom
+  469  gcloud compute firewall-rules delete vpc-demo-allow-subnets-from-on-prem
+  470  gcloud compute firewall-rules delete vpc-demo-allow-ssh-icmp
+  471  gcloud compute networks subnets list
+  472  gcloud compute networks subnets list --network=vpc-demo
+  473  gcloud compute networks subnets delete vpc-demo-subnet2 --region us-central
+  474  gcloud compute networks subnets delete vpc-demo-subnet2 --region us-central1
+  475  gcloud compute networks subnets delete vpc-demo-subnet1 --region us-east1
+  476  gcloud compute networks subnets list
+  477  gcloud compute networks subnets list --network=on-prem
+  478  gcloud compute networks list
+  479  gcloud compute networks list
+  480  gcloud compute networks subnets list --nwtwork on-prem
+  481  gcloud compute networks subnets list --network on-prem
+  482  gcloud compute networks subnets delete on-prem-subnet  --network on-prem
+  483  gcloud compute networks subnets delete on-prem-subnet  --region us-central1
+  484  gcloud compute network subnets list --network us-centra;1
+  485  gcloud compute network subnets list --network us-central1
+  486  gcloud compute networks subnets list --network us-central1
+  487  gcloud compute networks subnets list --network vpc-demo
+  488  gcloud compute networks delete vpc-demo 
+  489  gcloud compute networks firewalls list
+  490  gcloud compute networks firewall-rules list
+  491  gcloud compute firewall-rules list
+  492  gcloud compute firewall-rules delete vpc-demo-allow-ssh
+  493  gcloud compute networks delete vpc-demo
+  494  gcloud compute firewall-rules list
+  495  gcloud compute firewall-rules delete vpc-demo-allow-rdp vpc-demo-allow-icmp vpc-demo-allow-http
+  496  gcloud compute firewall-rules list
+  497  gcloud compute firewall-rules delete on-prem-allow-ssh on-prem-allow-rdp on-prem-allow-icmp on-prem-allow-http
+  498  gcloud compute networks delete vpc-demo
+  499  gcloud compute networks delete on-prem
+  500  gcloud compute networks list
+  501  gcloud auth list
+  502  gcloud config list project
+  503  gcloud config list
+  504  gcloud config set compute/region us-centralq
+  505  gcloud config set compute/region us-central1
+  506  gcloud config list
+  507  gcloud config get-value compute/region
+  508  gcloud config set compute/zone us-central1-a
+  509  gcloud config get-value compute/zone
+  510  gcloud config get-value project
+  511  gcloud compute project-info describe --project $(gcloud config get-value project)
+  512  export PROJECT_ID=$(gcloud config get-value project)
+  513  echo $PROJECT_ID
+  514  echo -e "project id:$PROJECT_ID\nzone:$ZONE"
+  515  export REGION=us-central1
+  516  echo $REGION
+  517  export ZONE=us-central1-a
+  518  echo $ZONE
+  519  echo -e "project id:$PROJECT_ID\nzone:$ZONE"
+  
+  
+  500  gcloud compute instances create my-instance --machine-type e2-medium --zone $ZONE
+  501  gcloud compute instances list
+  502  gcloud compute instances create --help
+  503  gcloud -h
+  504  gcloud confif --help
+  505  gcloud config --help
+  506  gcloud help config
+  507  gcloud config list
+  508  gcloud config list --all
+  509  gcloud components list
+  512  gcloud compute instances list --filter="name=('my-instance')"
+  513  gcloud compute firewall-rules list
+  515  gcloud compute firewall-rules list --filter="network='default'"
+  516  gcloud compute firewall-rules list --filter="NETWORK:'default' AND ALLOW:'icmp'"
+  518  gcloud compute ssh aparnasana2001@my-instance --zone $ZONE or gcloud compute ssh aparnasana2001@my-instance 
+  520  gcloud compute firewall-rules list
+  521  gcloud compute instances add-tags my-instance --tags http-server,https-server
+  522  gcloud compute firewall-rules create default-allow-http --direction=INGRESS --priority=1000 --network=default --action=ALLOW --rules=tcp:80 --source-ranges=0.0.0.0/0 --target-tags=http-server
+  523  gcloud compute firewall-rules list --filter="name='default-allow-http'"
+  524  gcloud compute firewall-rules list --filter=ALLOW:'80'
+  526  curl http://$(gcloud compute instances list --filter=name:my-instance --format='value(EXTERNAL_IP)')
+  527  gcloud logging logs list
+  528  gcloud logging logs list --filter="compute"
+  530  gcloud logging read "resource.type=my_instance_resouce" --limit 5
+  531  gcloud logging read "resource.type=my_instance_resource AND labels.instance_name='my-instance'" --limit 5
+  532  gcloud logging logs list
+
+    
+    
+
+
+           
+    
+    
+      
+    
